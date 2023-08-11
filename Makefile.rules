@@ -1,0 +1,174 @@
+# Snitch runtime
+# NOTE: adjust SNITCH_RUNTIME_* paths, 
+# e.g. according to the Docker volume mount point
+SNITCH_RUNTIME_ROOT ?= /src/sw/snRuntime
+
+# Toolchain
+# NOTE: we are using the absolute path from the Docker container
+SNITCH_CC     ?= /tools/riscv-llvm/bin/riscv32-unknown-elf-clang
+SNITCH_LD     ?= /tools/riscv-llvm/bin/riscv32-unknown-elf-clang
+SNITCH_AR     ?= /tools/riscv-llvm/bin/llvm-ar
+SNITCH_RANLIB ?= /tools/riscv-llvm/bin/llvm-ranlib
+
+CFLAGS =
+# Mixing .c and .ll files makes some flags, useful for the former,
+# unused for the latter (e.g. -I)
+CFLAGS += -Wno-unused-command-line-argument
+# Flags for -x c
+CFLAGS += -D __LINK_LLD
+CFLAGS += -D __TOOLCHAIN_LLVM__
+CFLAGS += -I $(SNITCH_RUNTIME_ROOT)/include
+CFLAGS += -I $(SNITCH_RUNTIME_ROOT)/vendor
+CFLAGS += -I $(SNITCH_RUNTIME_ROOT)/vendor/riscv-opcodes
+# Common flags
+CFLAGS += -flto=thin
+CFLAGS += -mcpu=snitch
+CFLAGS += -mcmodel=medany
+CFLAGS += -ffast-math
+CFLAGS += -fno-builtin-printf
+CFLAGS += -fno-common
+CFLAGS += -ffunction-sections
+CFLAGS += -static
+CFLAGS += -mllvm -enable-misched=false
+CFLAGS += -mno-relax
+CFLAGS += -menable-experimental-extensions
+CFLAGS += -O3
+CFLAGS += -g
+CFLAGS += -Wextra
+
+CC1FLAGS =
+CC1FLAGS += -triple riscv32-unknown-unknown-elf
+CC1FLAGS += -emit-llvm-bc
+CC1FLAGS += -flto=thin
+CC1FLAGS += -flto-unit
+CC1FLAGS += -disable-free
+CC1FLAGS += -disable-llvm-verifier
+CC1FLAGS += -static-define
+CC1FLAGS += -mrelocation-model static
+CC1FLAGS += -mframe-pointer=none
+CC1FLAGS += -menable-no-infs
+CC1FLAGS += -menable-no-nans
+CC1FLAGS += -menable-unsafe-fp-math
+CC1FLAGS += -fno-signed-zeros
+CC1FLAGS += -mreassociate
+CC1FLAGS += -freciprocal-math
+CC1FLAGS += -ffp-contract=fast
+CC1FLAGS += -fno-rounding-math
+CC1FLAGS += -ffast-math
+CC1FLAGS += -ffinite-math-only
+CC1FLAGS += -mconstructor-aliases
+CC1FLAGS += -nostdsysteminc
+CC1FLAGS += -mcmodel=medium
+CC1FLAGS += -target-cpu snitch
+CC1FLAGS += -target-feature +m
+CC1FLAGS += -target-feature +a
+CC1FLAGS += -target-feature +f
+CC1FLAGS += -target-feature +d
+CC1FLAGS += -target-feature +experimental-zfh
+CC1FLAGS += -target-feature +xfrep
+CC1FLAGS += -target-feature +xssr
+CC1FLAGS += -target-feature +xdma
+CC1FLAGS += -target-feature +xfalthalf
+CC1FLAGS += -target-feature +xfquarter
+CC1FLAGS += -target-feature +xfaltquarter
+CC1FLAGS += -target-feature +xfvecsingle
+CC1FLAGS += -target-feature +xfvechalf
+CC1FLAGS += -target-feature +xfvecalthalf
+CC1FLAGS += -target-feature +xfvecquarter
+CC1FLAGS += -target-feature +xfvecaltquarter
+CC1FLAGS += -target-feature +xfauxhalf
+CC1FLAGS += -target-feature +xfauxalthalf
+CC1FLAGS += -target-feature +xfauxquarter
+CC1FLAGS += -target-feature +xfauxaltquarter
+CC1FLAGS += -target-feature +xfauxvecsingle
+CC1FLAGS += -target-feature +xfauxvechalf
+CC1FLAGS += -target-feature +xfauxvecalthalf
+CC1FLAGS += -target-feature +xfauxvecquarter
+CC1FLAGS += -target-feature +xfauxvecaltquarter
+CC1FLAGS += -target-feature +xfexpauxvechalf
+CC1FLAGS += -target-feature +xfexpauxvecalthalf
+CC1FLAGS += -target-feature +xfexpauxvecquarter
+CC1FLAGS += -target-feature +xfexpauxvecaltquarter
+CC1FLAGS += -target-feature -64bit
+CC1FLAGS += -target-feature -relax
+CC1FLAGS += -target-feature -save-restore
+CC1FLAGS += -target-abi ilp32d
+CC1FLAGS += -msmall-data-limit 8
+CC1FLAGS += -fno-split-dwarf-inlining
+CC1FLAGS += -ffunction-sections
+CC1FLAGS += -debug-info-kind=limited
+CC1FLAGS += -dwarf-version=4
+CC1FLAGS += -debugger-tuning=gdb
+CC1FLAGS += -D __LINK_LLD
+CC1FLAGS += -D __TOOLCHAIN_LLVM__
+CC1FLAGS += -I $(SNITCH_RUNTIME_ROOT)/include
+CC1FLAGS += -I $(SNITCH_RUNTIME_ROOT)/vendor
+CC1FLAGS += -I $(SNITCH_RUNTIME_ROOT)/vendor/riscv-opcodes
+CC1FLAGS += -resource-dir /tools/riscv-llvm/lib/clang/12.0.1
+CC1FLAGS += -internal-isystem /tools/riscv-llvm/riscv32-unknown-elf/include
+CC1FLAGS += -fno-builtin-printf
+CC1FLAGS += -fno-signed-char
+CC1FLAGS += -vectorize-loops
+CC1FLAGS += -vectorize-slp
+CC1FLAGS += -faddrsig
+CC1FLAGS += -Wextra
+CC1FLAGS += -O3
+CC1FLAGS += -mllvm -enable-misched=false
+
+# Make sure we are finding the right linker script
+# even if we are included in another Makefile
+pwd := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+LDSCRIPT := $(pwd)/cluster.ld
+
+LDFLAGS =
+LDFLAGS += -fuse-ld=lld
+LDFLAGS += -flto=thin
+LDFLAGS += -mcpu=snitch
+LDFLAGS += -nostartfiles
+LDFLAGS += -Wl,--image-base=0x80000000
+LDFLAGS += -static
+LDFLAGS += -Wl,-z,norelro
+LDFLAGS += -Wl,--gc-sections
+LDFLAGS += -Wl,--no-relax
+LDFLAGS += -T $(LDSCRIPT)
+LDFLAGS += -lm
+
+%.o: %.c
+	$(SNITCH_CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.ll
+	$(SNITCH_CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.S
+	$(SNITCH_CC) $(CFLAGS) -c $< -o $@
+
+#
+# Snitch runtime
+#
+
+# Runtime library will be built in $PWD
+SNITCH_RUNTIME_LIB = libsnRuntime.a
+
+SNITCH_RUNTIME_SOURCES +=
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/barrier.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/dma.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/memcpy.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/printf.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/team.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/ssr.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/alloc.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/interrupt.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/perf_cnt.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/ssr_v2.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/platforms/rtl/start_snitch.S
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/platforms/rtl/putchar.c
+SNITCH_RUNTIME_SOURCES += $(SNITCH_RUNTIME_ROOT)/src/platforms/shared/start.c
+
+SNITCH_RUNTIME_OBJS=$(patsubst %.c,%.o,$(patsubst %.S,%.o,$(SNITCH_RUNTIME_SOURCES)))
+
+$(SNITCH_RUNTIME_LIB): $(SNITCH_RUNTIME_OBJS)
+	$(SNITCH_AR) cr $(SNITCH_RUNTIME_LIB) $(SNITCH_RUNTIME_OBJS)
+	$(SNITCH_RANLIB) $(SNITCH_RUNTIME_LIB)
+
+clean-snitch-runtime:
+	rm -f $(SNITCH_RUNTIME_LIB) $(SNITCH_RUNTIME_OBJS)
