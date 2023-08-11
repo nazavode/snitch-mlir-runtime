@@ -1,64 +1,11 @@
-#include "snmlir.h"
+#include "mlir-memref-copy.hpp"
 
-#include <printf.h> // note: this is Snitch's own printf shim, *not* the std one
-#include <snrt.h>
+#include <cstring>
 
-//===----------------------------------------------------------------------===//
-// Defined by the actual platform (e.g.: Banshee)
-//===----------------------------------------------------------------------===//
-
-extern "C" void snrt_putchar(char);
-
-//===----------------------------------------------------------------------===//
-// Shims for missing libc
-//===----------------------------------------------------------------------===//
-
-static inline void *snrt_alloca(size_t size) {
-  return __builtin_alloca(size);
-}
-
-//===----------------------------------------------------------------------===//
-// Support library for the LLVM IR Target. See:
-// https://mlir.llvm.org/docs/TargetLLVMIR/#generic-alloction-and-deallocation-functions
-//===----------------------------------------------------------------------===//
-
-extern "C" void *_mlir_memref_to_llvm_alloc(size_t size) {
-  return ::snrt_l1alloc(size);
-}
-
-extern "C" void _mlir_memref_to_llvm_free(void *ptr) {
-  // For the current Snitch Runtime bump allocator,
-  // free is a no-op.
-}
-
-//===----------------------------------------------------------------------===//
-// Small runtime support library for vector.print lowering during codegen.
-//===----------------------------------------------------------------------===//
-
-extern "C" void printI64(int64_t i) { printf("%lld", i); }
-
-extern "C" void printU64(uint64_t u) { printf("%llu", u); }
-
-extern "C" void printF32(float f) { printf("%g", f); }
-
-extern "C" void printF64(double d) { printf("%lg", d); }
-
-extern "C" void printOpen() {
-  ::snrt_putchar('(');
-  ::snrt_putchar(' ');
-}
-
-extern "C" void printClose() {
-  ::snrt_putchar(' ');
-  ::snrt_putchar(')');
-}
-
-extern "C" void printComma() {
-  ::snrt_putchar(',');
-  ::snrt_putchar(' ');
-}
-
-extern "C" void printNewline() { ::snrt_putchar('\n'); }
+// FIXME it's impossible to include the actual snitch-runtime headers the
+// way they are written right now. Let's declare stuff here and pray the abi gods.
+extern "C" void *snrt_l1alloc(size_t);
+//
 
 //===----------------------------------------------------------------------===//
 // Small runtime support library for memref.copy lowering during codegen.
@@ -81,7 +28,7 @@ extern "C" void memrefCopy(int64_t elemSize, UnrankedMemRefType<char> *srcArg,
   char *dstPtr = dst.data + dst.offset * elemSize;
 
   if (rank == 0) {
-    ::snrt_memcpy(dstPtr, srcPtr, elemSize);
+    memcpy(dstPtr, srcPtr, elemSize);
     return;
   }
 
@@ -102,7 +49,7 @@ extern "C" void memrefCopy(int64_t elemSize, UnrankedMemRefType<char> *srcArg,
   int32_t readIndex = 0, writeIndex = 0;
   for (;;) {
     // Copy over the element, byte by byte.
-    ::snrt_memcpy(dstPtr + writeIndex, srcPtr + readIndex, elemSize);
+    memcpy(dstPtr + writeIndex, srcPtr + readIndex, elemSize);
     // Advance index and read position.
     for (int32_t axis = rank - 1; axis >= 0; --axis) {
       // Advance at current axis.

@@ -11,10 +11,14 @@
 
 #pragma once
 
-#include <snrt.h>
-
 #include <cstddef>
 #include <cstdlib>
+
+// FIXME it's impossible to include the actual snitch-runtime headers the
+// way they are written right now. Let's declare stuff here and pray the abi gods.
+extern "C" void *snrt_l1alloc(size_t);
+extern "C" void *snrt_l3alloc(size_t);
+//
 
 namespace snitch {
 

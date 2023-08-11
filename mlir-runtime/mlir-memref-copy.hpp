@@ -1,16 +1,6 @@
-//===----------------------------------------------------------------------===//
-// Copyright 2020 ETH Zurich and University of Bologna.
-// Licensed under the Apache License, Version 2.0, see LICENSE for details.
-// SPDX-License-Identifier: Apache-2.0
-//===----------------------------------------------------------------------===//
-
-//===----------------------------------------------------------------------===//
-// Minimal MLIR runtime for Snitch.
-//===----------------------------------------------------------------------===//
-
 #pragma once
 
-#include "snallocator.h"
+#include "snitch-allocators.h"
 
 #include <array>
 #include <cassert>
@@ -443,23 +433,3 @@ private:
 extern "C" SNITCH_MLIR_EXPORT void memrefCopy(int64_t elemSize,
                                               ::UnrankedMemRefType<char> *src,
                                               ::UnrankedMemRefType<char> *dst);
-
-//===----------------------------------------------------------------------===//
-// Small runtime support library for vector.print lowering during codegen.
-//===----------------------------------------------------------------------===//
-extern "C" SNITCH_MLIR_EXPORT void printI64(int64_t i);
-extern "C" SNITCH_MLIR_EXPORT void printU64(uint64_t u);
-extern "C" SNITCH_MLIR_EXPORT void printF32(float f);
-extern "C" SNITCH_MLIR_EXPORT void printF64(double d);
-extern "C" SNITCH_MLIR_EXPORT void printOpen();
-extern "C" SNITCH_MLIR_EXPORT void printClose();
-extern "C" SNITCH_MLIR_EXPORT void printComma();
-extern "C" SNITCH_MLIR_EXPORT void printNewline();
-
-//===----------------------------------------------------------------------===//
-// Support library for the LLVM IR Target. See:
-// https://mlir.llvm.org/docs/TargetLLVMIR/#generic-alloction-and-deallocation-functions
-//===----------------------------------------------------------------------===//
-
-extern "C" SNITCH_MLIR_EXPORT void *_mlir_memref_to_llvm_alloc(size_t size);
-extern "C" SNITCH_MLIR_EXPORT void _mlir_memref_to_llvm_free(void *ptr);
