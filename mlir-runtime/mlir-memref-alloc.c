@@ -9,7 +9,7 @@ void *_mlir_memref_to_llvm_alloc(size_t size) {
   return snrt_l1alloc(size);
 }
 
-void _mlir_memref_to_llvm_free(void *ptr) {
+void _mlir_memref_to_llvm_free(void *) {
   // For the current Snitch Runtime bump allocator,
   // free is a no-op.
 }
