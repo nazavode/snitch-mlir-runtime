@@ -4,12 +4,11 @@ import re
 import sys
 
 
-LLVM_SOURCE_FILENAME = re.compile('source_filename[\s]*=[\s]*"\w+"')
-LLVM_TRIPLE = re.compile('target triple[\s]*=[\s]*"\w+"')
-LLVM_DATALAYOUT = re.compile('target datalayout[\s]*=[\s]*"\w+"')
+LLVM_TARGET_TRIPLE = re.compile('target triple[\s]*=[\s]*"\w+"')
+LLVM_TARGET_DATALAYOUT = re.compile('target datalayout[\s]*=[\s]*"\w+"')
 LLVM_NAMED_METADATA = re.compile("!([\d]+)[\s]*=[\s]*!")
 LLVM_MODULE_FLAGS = re.compile("!llvm.module.flags[\s]*=[\s]*.+")
-LLVM_ATTR_SIDEFFECT = re.compile("memory\(.*\)")
+LLVM_ATTR_SIDEEFFECT = re.compile("memory\(.*\)")
 
 
 SNITCH_DATALAYOUT = "e-m:e-p:32:32-i64:64-n32-S128"
@@ -28,9 +27,9 @@ def get_metadata_ids(ir):
 
 if __name__ == "__main__":
     ir = sys.stdin.read()
-    ir = re.sub(LLVM_TRIPLE, "", ir)
-    ir = re.sub(LLVM_DATALAYOUT, "", ir)
-    ir = re.sub(LLVM_ATTR_SIDEFFECT, "", ir)
+    ir = re.sub(LLVM_TARGET_TRIPLE, "", ir)
+    ir = re.sub(LLVM_TARGET_DATALAYOUT, "", ir)
+    ir = re.sub(LLVM_ATTR_SIDEEFFECT, "", ir)
     ir = re.sub(LLVM_MODULE_FLAGS, "", ir)
     ir += f'target triple = "{SNITCH_TRIPLE}"\n'
     ir += f'target datalayout = "{SNITCH_DATALAYOUT}"\n'
