@@ -1,23 +1,8 @@
-CC = /tools/riscv-llvm/bin/riscv32-unknown-elf-clang
-AR = /tools/riscv-llvm/bin/llvm-ar
-RANLIB = /tools/riscv-llvm/bin/llvm-ranlib
-
-CFLAGS =
-CFLAGS += -mcpu=snitch
-CFLAGS += -mcmodel=medany
-CFLAGS += -ffast-math
-CFLAGS += -fno-builtin-printf
-CFLAGS += -fno-common
-CFLAGS += -ffunction-sections
-CFLAGS += -static
-CFLAGS += -mllvm -enable-misched=false
-CFLAGS += -mno-relax
-CFLAGS += -menable-experimental-extensions
-CFLAGS += -O3
-CFLAGS += -Wall -Wextra -pedantic
+SNITCH_RUNTIME_THIS := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+include $(SNITCH_RUNTIME_THIS)/../Makefile.rules
 
 %.o: %.c
-	$(CC) $(CFLAGS) -I api -I src -c $< -o $@
+	$(CC) $(CFLAGS) -I$(SNITCH_RUNTIME_THIS)/api -I$(SNITCH_RUNTIME_THIS)/src -c $< -o $@
 
 libsnitch-runtime.a: snrt.o
 	$(AR) rc $@ $^
