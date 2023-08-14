@@ -2,7 +2,26 @@
 
 import re
 import sys
+import argparse
 
+PARSER = argparse.ArgumentParser(
+    prog="to-llvm12.py",
+    description="""Transform an LLVM IR module to make it compatible with LLVM 12.
+Reads from stdin, outputs to stdout.
+
+Caveats:
+* This applies textual changes, no parsing is involved, so your mileage may
+  vary according to the input IR
+* The input IR must use typed pointee pointers
+
+Changes applied:
+* Fix (or add if not present) the module target triple
+* Fix (or add if not present) the module target data layout
+* Remove backward incompatible side effects attributes on functions
+* Fix (or add if not present) module flags specifying ABI and code model
+""",
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+)
 
 LLVM_TARGET_TRIPLE = re.compile('target triple[\s]*=[\s]*"\w+"')
 LLVM_TARGET_DATALAYOUT = re.compile('target datalayout[\s]*=[\s]*"\w+"')
@@ -21,11 +40,12 @@ SNITCH_MODULE_METADATA = [
 ]
 
 
-def get_metadata_ids(ir):
-    return (int(match.groups()[0]) for match in LLVM_NAMED_METADATA.finditer(ir))
+def get_availale_metadata_id(ir):
+    return max(int(match.groups()[0]) for match in LLVM_NAMED_METADATA.finditer(ir)) + 1
 
 
 if __name__ == "__main__":
+    args = PARSER.parse_args()
     ir = sys.stdin.read()
     ir = re.sub(LLVM_TARGET_TRIPLE, "", ir)
     ir = re.sub(LLVM_TARGET_DATALAYOUT, "", ir)
@@ -33,9 +53,8 @@ if __name__ == "__main__":
     ir = re.sub(LLVM_MODULE_FLAGS, "", ir)
     ir += f'target triple = "{SNITCH_TRIPLE}"\n'
     ir += f'target datalayout = "{SNITCH_DATALAYOUT}"\n'
-    nmeta = max(get_metadata_ids(ir))
     module_meta = "!llvm.module.flags = !{ "
-    for metaid, meta in enumerate(SNITCH_MODULE_METADATA, nmeta + 1):
+    for metaid, meta in enumerate(SNITCH_MODULE_METADATA, get_availale_metadata_id(ir)):
         ir += f"!{metaid} = !{meta}\n"
         module_meta += f"!{metaid} "
     module_meta += "}\n"
