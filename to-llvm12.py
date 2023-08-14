@@ -53,10 +53,10 @@ if __name__ == "__main__":
     ir = re.sub(LLVM_MODULE_FLAGS, "", ir)
     ir += f'target triple = "{SNITCH_TRIPLE}"\n'
     ir += f'target datalayout = "{SNITCH_DATALAYOUT}"\n'
-    module_meta = "!llvm.module.flags = !{ "
+    moduleflags = "!llvm.module.flags = !{ "
     for metaid, meta in enumerate(SNITCH_MODULE_METADATA, get_availale_metadata_id(ir)):
         ir += f"!{metaid} = !{meta}\n"
-        module_meta += f"!{metaid} "
-    module_meta += "}\n"
-    ir += module_meta
+        moduleflags += f"!{metaid} "
+    moduleflags += "}\n"
+    ir += moduleflags
     print(ir)
