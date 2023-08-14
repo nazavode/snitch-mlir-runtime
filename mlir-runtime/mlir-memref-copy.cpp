@@ -17,7 +17,6 @@ extern "C" void memrefCopy(int64_t elemSize, UnrankedMemRefType<char> *srcArg,
   DynamicMemRefType<char> dst(*dstArg);
 
   int32_t rank = src.rank;
-  // MLIR_MSAN_MEMORY_IS_INITIALIZED(src.sizes, rank * sizeof(int32_t));
 
   // Handle empty shapes -> nothing to copy.
   for (int rankp = 0; rankp < rank; ++rankp)
