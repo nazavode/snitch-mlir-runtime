@@ -23,13 +23,6 @@ Changes applied:
     formatter_class=argparse.RawDescriptionHelpFormatter,
 )
 
-LLVM_TARGET_TRIPLE = re.compile('target triple[\s]*=[\s]*"\w+"')
-LLVM_TARGET_DATALAYOUT = re.compile('target datalayout[\s]*=[\s]*"\w+"')
-LLVM_NAMED_METADATA = re.compile("!([\d]+)[\s]*=[\s]*!")
-LLVM_MODULE_FLAGS = re.compile("!llvm.module.flags[\s]*=[\s]*.+")
-LLVM_ATTR_SIDEEFFECT = re.compile("memory\(.*\)")
-
-
 SNITCH_DATALAYOUT = "e-m:e-p:32:32-i64:64-n32-S128"
 SNITCH_TRIPLE = "riscv32-unknown-unknown-elf"
 SNITCH_MODULE_METADATA = [
@@ -46,17 +39,29 @@ def get_availale_metadata_id(ir):
 
 if __name__ == "__main__":
     args = PARSER.parse_args()
+    LLVM_TARGET_TRIPLE = re.compile('target triple[\s]*=[\s]*"\w+"')
+    LLVM_TARGET_DATALAYOUT = re.compile('target datalayout[\s]*=[\s]*"\w+"')
+    LLVM_NAMED_METADATA = re.compile("!([\d]+)[\s]*=[\s]*!")
+    LLVM_MODULE_FLAGS = re.compile("!llvm.module.flags[\s]*=[\s]*.+")
+    LLVM_ATTR_SIDEEFFECT = re.compile("memory\(.*\)")
     ir = sys.stdin.read()
+    # Remove offending stuff:
     ir = re.sub(LLVM_TARGET_TRIPLE, "", ir)
     ir = re.sub(LLVM_TARGET_DATALAYOUT, "", ir)
     ir = re.sub(LLVM_ATTR_SIDEEFFECT, "", ir)
     ir = re.sub(LLVM_MODULE_FLAGS, "", ir)
-    ir += f'target triple = "{SNITCH_TRIPLE}"\n'
-    ir += f'target datalayout = "{SNITCH_DATALAYOUT}"\n'
+    # Add top-level entities:
+    ir = (
+        f'target triple = "{SNITCH_TRIPLE}"\n'
+        + f'target datalayout = "{SNITCH_DATALAYOUT}"\n'
+        + ir
+    )
+    # Add metadata and module flags:
     moduleflags = "!llvm.module.flags = !{ "
     for metaid, meta in enumerate(SNITCH_MODULE_METADATA, get_availale_metadata_id(ir)):
         ir += f"!{metaid} = !{meta}\n"
-        moduleflags += f"!{metaid} "
+        moduleflags += f"!{metaid}, "
+    moduleflags = moduleflags.rstrip(" ,")
     moduleflags += "}\n"
     ir += moduleflags
     print(ir)
