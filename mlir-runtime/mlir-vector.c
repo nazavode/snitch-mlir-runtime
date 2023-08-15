@@ -1,4 +1,4 @@
-#include "mlir-vector.h"
+#include <mlir-vector.h>
 
 // FIXME it's impossible to include the actual snitch-runtime headers the
 // way they are written right now. Let's declare stuff here and pray the abi gods.

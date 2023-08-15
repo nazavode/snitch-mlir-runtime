@@ -34,7 +34,13 @@ SNITCH_MODULE_METADATA = [
 
 
 def get_availale_metadata_id(ir):
-    return max(int(match.groups()[0]) for match in LLVM_NAMED_METADATA.finditer(ir)) + 1
+    return (
+        max(
+            (int(match.groups()[0]) for match in LLVM_NAMED_METADATA.finditer(ir)),
+            default=-1,
+        )
+        + 1
+    )
 
 
 if __name__ == "__main__":

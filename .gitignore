@@ -1,3 +1,6 @@
+# LLVM IR preprocessed stuff
+*.ll12
+
 # Prerequisites
 *.d
 

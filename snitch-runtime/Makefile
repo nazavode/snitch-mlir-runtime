@@ -1,14 +1,32 @@
-SNITCH_RUNTIME_THIS := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-include $(SNITCH_RUNTIME_THIS)/../Makefile.rules
+SNITCH_RUNTIME_DIRNAME := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+include $(SNITCH_RUNTIME_DIRNAME)/../Makefile.rules
 
-%.o: %.c
-	$(CC) $(CFLAGS) -I$(SNITCH_RUNTIME_THIS)/api -I$(SNITCH_RUNTIME_THIS)/src -c $< -o $@
+OBJS =
+OBJS += alloc.o
+OBJS += barrier.o
+OBJS += dma.o
+OBJS += interrupt.o
+OBJS += memcpy.o
+OBJS += perf_cnt.o
+OBJS += printf.o
+OBJS += putchar.o
+OBJS += ssr.o
+OBJS += ssr_v2.o
+OBJS += start.o
+OBJS += team.o
+OBJS += start_base.o
+OBJS += start_snitch.o
+OBJS += start_snitch_rtl.o
 
-libsnitch-runtime.a: snrt.o
-	$(AR) rc $@ $^
-	$(RANLIB) $@
+CFLAGS += -I $(SNITCH_RUNTIME_DIRNAME)/include
+CFLAGS += -I $(SNITCH_RUNTIME_DIRNAME)/vendor/riscv-opcodes
 
 all: libsnitch-runtime.a
 
+libsnitch-runtime.a: $(OBJS)
+	$(AR) rc $@ $^
+	$(RANLIB) $@
+
 clean:
 	rm -f *.a *.o
+

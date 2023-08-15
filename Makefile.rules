@@ -1,5 +1,4 @@
-# Toolchain
-# NOTE: we are using the absolute path from the Docker container as defaults
+# NOTE: we are using the absolute path from the Docker container
 CC     = /tools/riscv-llvm/bin/riscv32-unknown-elf-clang
 LD     = /tools/riscv-llvm/bin/riscv32-unknown-elf-clang
 AR     = /tools/riscv-llvm/bin/llvm-ar
@@ -10,9 +9,8 @@ CFLAGS =
 # unused for the latter (e.g. -I)
 CFLAGS += -Wno-unused-command-line-argument
 # Flags for -x c
-CFLAGS += -D __LINK_LLD
-CFLAGS += -D __TOOLCHAIN_LLVM__
-CFLAGS += -flto=thin
+CFLAGS += -D__TOOLCHAIN_LLVM__
+# Common flags
 CFLAGS += -mcpu=snitch
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffast-math
@@ -24,12 +22,14 @@ CFLAGS += -mllvm -enable-misched=false
 CFLAGS += -mno-relax
 CFLAGS += -menable-experimental-extensions
 CFLAGS += -O3
-CFLAGS += -Wextra
+# FIXME parametrize debug symbols and lto
+CFLAGS += -flto=thin
+CFLAGS += -g
 
 # Make sure we are finding the right linker script
 # even if we are included in another Makefile
-MAKEFILE_RULES_THIS := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-LDSCRIPT := $(MAKEFILE_RULES_THIS)/base.ld
+MAKEFILE_RULES_DIRNAME := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+LDSCRIPT := $(MAKEFILE_RULES_DIRNAME)/cluster.ld
 
 LDFLAGS =
 LDFLAGS += -fuse-ld=lld
@@ -47,7 +47,10 @@ LDFLAGS += -lm
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.o: %.ll
+%.ll12: %.ll
+	$(MAKEFILE_RULES_DIRNAME)/to-llvm12.py < $< > $@
+
+%.o: %.ll12
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o: %.S

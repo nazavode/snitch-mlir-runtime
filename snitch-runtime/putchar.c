@@ -1,6 +1,7 @@
 // Copyright 2020 ETH Zurich and University of Bologna.
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
+#include "snrt.h"
 
 extern uintptr_t volatile tohost, fromhost;
 
@@ -17,7 +18,7 @@ static volatile struct putc_buffer {
 } *const putc_buffer = (void *)&_edram;
 
 // Provide an implementation for putchar.
-void _putchar(char character) {
+void snrt_putchar(char character) {
     volatile struct putc_buffer *buf = &putc_buffer[snrt_hartid()];
     buf->data[buf->hdr.size++] = character;
     if (buf->hdr.size == PUTC_BUFFER_LEN || character == '\n') {
