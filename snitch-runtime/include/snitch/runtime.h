@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
 
+#include <snitch/riscv_encoding.h>
+
 #include <stddef.h>
 #include <stdint.h>
-
-#include "encoding.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,8 +25,7 @@ extern "C" {
 #endif
 
 static inline void *snrt_memset(void *ptr, int value, size_t num) {
-    for (uint32_t i = 0; i < num; ++i)
-        *((uint8_t *)ptr + i) = (unsigned char)value;
+    for (uint32_t i = 0; i < num; ++i) *((uint8_t *)ptr + i) = (unsigned char)value;
     return ptr;
 }
 
@@ -103,20 +102,17 @@ extern void *snrt_memcpy(void *dst, const void *src, size_t n);
 /// A DMA transfer identifier.
 typedef uint32_t snrt_dma_txid_t;
 /// Initiate an asynchronous 1D DMA transfer with wide 64-bit pointers.
-extern snrt_dma_txid_t snrt_dma_start_1d_wideptr(uint64_t dst, uint64_t src,
-                                                 size_t size);
+extern snrt_dma_txid_t snrt_dma_start_1d_wideptr(uint64_t dst, uint64_t src, size_t size);
 /// Initiate an asynchronous 1D DMA transfer.
-extern snrt_dma_txid_t snrt_dma_start_1d(void *dst, const void *src,
-                                         size_t size);
+extern snrt_dma_txid_t snrt_dma_start_1d(void *dst, const void *src, size_t size);
 /// Initiate an asynchronous 2D DMA transfer with wide 64-bit pointers.
-extern snrt_dma_txid_t snrt_dma_start_2d_wideptr(uint64_t dst, uint64_t src,
-                                                 size_t size, size_t dst_stride,
-                                                 size_t src_stride,
+extern snrt_dma_txid_t snrt_dma_start_2d_wideptr(uint64_t dst, uint64_t src, size_t size,
+                                                 size_t dst_stride, size_t src_stride,
                                                  size_t repeat);
 /// Initiate an asynchronous 2D DMA transfer.
-extern snrt_dma_txid_t snrt_dma_start_2d(void *dst, const void *src,
-                                         size_t size, size_t dst_stride,
-                                         size_t src_stride, size_t repeat);
+extern snrt_dma_txid_t snrt_dma_start_2d(void *dst, const void *src, size_t size,
+                                         size_t dst_stride, size_t src_stride,
+                                         size_t repeat);
 /// Block until a transfer finishes.
 extern void snrt_dma_wait(snrt_dma_txid_t tid);
 /// Block until all operation on the DMA ceases.
@@ -138,18 +134,16 @@ enum snrt_ssr_dim {
 };
 
 extern void snrt_ssr_loop_1d(enum snrt_ssr_dm dm, size_t b0, size_t i0);
-extern void snrt_ssr_loop_2d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
-                             size_t i0, size_t i1);
-extern void snrt_ssr_loop_3d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
-                             size_t b2, size_t i0, size_t i1, size_t i2);
-extern void snrt_ssr_loop_4d(enum snrt_ssr_dm dm, size_t b0, size_t b1,
-                             size_t b2, size_t b3, size_t i0, size_t i1,
-                             size_t i2, size_t i3);
+extern void snrt_ssr_loop_2d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t i0,
+                             size_t i1);
+extern void snrt_ssr_loop_3d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t b2,
+                             size_t i0, size_t i1, size_t i2);
+extern void snrt_ssr_loop_4d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t b2,
+                             size_t b3, size_t i0, size_t i1, size_t i2, size_t i3);
 extern void snrt_ssr_repeat(enum snrt_ssr_dm dm, size_t count);
 extern void snrt_ssr_enable();
 extern void snrt_ssr_disable();
-extern void snrt_ssr_read(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim,
-                          volatile void *ptr);
+extern void snrt_ssr_read(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim, volatile void *ptr);
 extern void snrt_ssr_write(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim,
                            volatile void *ptr);
 extern void snrt_fpu_fence();
@@ -215,18 +209,14 @@ static inline void snrt_interrupt_global_disable(void) {
  * @param irq one of IRQ_[S/H/M]_[SOFT/TIMER/EXT]
  * interrupts
  */
-static inline void snrt_interrupt_enable(uint32_t irq) {
-    set_csr(mie, 1 << irq);
-}
+static inline void snrt_interrupt_enable(uint32_t irq) { set_csr(mie, 1 << irq); }
 /**
  * @brief Disable interrupt source
  * @details See snrt_interrupt_enable
  *
  * @param irq one of IRQ_[S/H/M]_[SOFT/TIMER/EXT]
  */
-static inline void snrt_interrupt_disable(uint32_t irq) {
-    clear_csr(mie, 1 << irq);
-}
+static inline void snrt_interrupt_disable(uint32_t irq) { clear_csr(mie, 1 << irq); }
 /**
  * @brief Get the cause of an interrupt
  * @details
@@ -291,8 +281,7 @@ static inline void snrt_mutex_ttas_lock(volatile uint32_t *pmtx) {
  * @brief Release the mutex
  */
 static inline void snrt_mutex_release(volatile uint32_t *pmtx) {
-    asm volatile("amoswap.w.rl  x0,x0,(%0)   # Release lock by storing 0\n"
-                 : "+r"(pmtx));
+    asm volatile("amoswap.w.rl  x0,x0,(%0)   # Release lock by storing 0\n" : "+r"(pmtx));
 }
 
 //================================================================================

@@ -1,10 +1,9 @@
 // Copyright 2020 ETH Zurich and University of Bologna.
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
-
 #pragma once
 
-#include "snrt.h"
+#include <snitch/runtime.h>
 
 #include <stdint.h>
 
@@ -76,8 +75,7 @@ typedef struct {
 } perf_reg_t;
 
 void snrt_start_perf_counter(enum snrt_perf_cnt perf_cnt,
-                             enum snrt_perf_cnt_type perf_cnt_type,
-                             uint32_t hart_id);
+                             enum snrt_perf_cnt_type perf_cnt_type, uint32_t hart_id);
 void snrt_stop_perf_counter(enum snrt_perf_cnt perf_cnt);
 void snrt_reset_perf_counter(enum snrt_perf_cnt);
 uint32_t snrt_get_perf_counter(enum snrt_perf_cnt perf_cnt);

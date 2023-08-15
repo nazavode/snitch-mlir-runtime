@@ -1,9 +1,10 @@
 // Copyright 2020 ETH Zurich and University of Bologna.
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
-#include "encoding.h"
-#include "snrt.h"
 #include "team.h"
+
+#include <snitch/riscv_encoding.h>
+#include <snitch/runtime.h>
 
 //================================================================================
 // Macros
@@ -158,9 +159,7 @@ void snrt_int_cluster_set(uint32_t mask) { cl_clint_set(mask); }
 // Weak definition of IRQ handler
 //================================================================================
 
-void __attribute__((weak)) irq_m_soft(uint32_t core_idx) {
-    snrt_int_sw_clear(core_idx);
-}
+void __attribute__((weak)) irq_m_soft(uint32_t core_idx) { snrt_int_sw_clear(core_idx); }
 
 void __attribute__((weak)) irq_m_timer(uint32_t core_idx) { (void)core_idx; }
 

@@ -14,8 +14,6 @@ OBJS += ssr.o
 OBJS += ssr_v2.o
 OBJS += start.o
 OBJS += team.o
-OBJS += start_base.o
-OBJS += start_snitch.o
 OBJS += start_snitch_rtl.o
 
 CFLAGS += -I $(SNITCH_RUNTIME_DIRNAME)/include

@@ -10,9 +10,12 @@ IncludeBlocks: Regroup
 IncludeCategories:
   - Regex:           '"([A-Za-z0-9.\Q/-_\E])+"'
     Priority:        1
+  # Snitch runtime
+  - Regex:           '<snitch/([A-Za-z0-9.\Q/-_\E])+>'
+    Priority:        2
   # Other headers in <> with extension
   - Regex:           '<([A-Za-z0-9.\Q/-_\E])+>'
-    Priority:        2
+    Priority:        3
   # Headers in <> without extension (std)
   - Regex:           '<([A-Za-z0-9\Q/-_\E])+>'
-    Priority:        3
+    Priority:        4

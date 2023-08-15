@@ -1,7 +1,10 @@
 // Copyright 2020 ETH Zurich and University of Bologna.
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
-#include "snrt.h"
+#include <snitch/runtime.h>
+
+#include <stddef.h>
+#include <stdint.h>
 
 static uint32_t read_ssr_cfg(uint32_t reg, uint32_t dm) {
     // scfgr t0, t0
@@ -51,8 +54,7 @@ void snrt_ssr_loop_1d(enum snrt_ssr_dm dm, size_t b0, size_t i0) {
 }
 
 // Configure an SSR data mover for a 2D loop nest.
-void snrt_ssr_loop_2d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t i0,
-                      size_t i1) {
+void snrt_ssr_loop_2d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t i0, size_t i1) {
     --b0;
     --b1;
     write_ssr_cfg(REG_BOUNDS + 0, dm, b0);
@@ -65,8 +67,8 @@ void snrt_ssr_loop_2d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t i0,
 }
 
 // Configure an SSR data mover for a 3D loop nest.
-void snrt_ssr_loop_3d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t b2,
-                      size_t i0, size_t i1, size_t i2) {
+void snrt_ssr_loop_3d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t b2, size_t i0,
+                      size_t i1, size_t i2) {
     --b0;
     --b1;
     --b2;
@@ -86,8 +88,8 @@ void snrt_ssr_loop_3d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t b2,
 // b0: Inner-most bound (limit of loop)
 // b3: Outer-most bound (limit of loop)
 // i0: increment size of inner-most loop
-void snrt_ssr_loop_4d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t b2,
-                      size_t b3, size_t i0, size_t i1, size_t i2, size_t i3) {
+void snrt_ssr_loop_4d(enum snrt_ssr_dm dm, size_t b0, size_t b1, size_t b2, size_t b3,
+                      size_t i0, size_t i1, size_t i2, size_t i3) {
     --b0;
     --b1;
     --b2;
@@ -113,13 +115,11 @@ void snrt_ssr_repeat(enum snrt_ssr_dm dm, size_t count) {
 }
 
 /// Start a streaming read.
-void snrt_ssr_read(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim,
-                   volatile void *ptr) {
+void snrt_ssr_read(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim, volatile void *ptr) {
     write_ssr_cfg(REG_RPTR + dim, dm, (uintptr_t)ptr);
 }
 
 /// Start a streaming write.
-void snrt_ssr_write(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim,
-                    volatile void *ptr) {
+void snrt_ssr_write(enum snrt_ssr_dm dm, enum snrt_ssr_dim dim, volatile void *ptr) {
     write_ssr_cfg(REG_WPTR + dim, dm, (uintptr_t)ptr);
 }

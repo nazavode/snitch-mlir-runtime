@@ -2,7 +2,10 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 #pragma once
-#include "snrt.h"
+
+#include <snitch/runtime.h>
+
+#include <stdint.h>
 
 extern __thread struct snrt_team *_snrt_team_current;
 extern __thread uint32_t _snrt_core_idx;

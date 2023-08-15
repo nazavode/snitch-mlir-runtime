@@ -1,5 +1,5 @@
 #include "printf.h"
-#include "snrt.h"
+#include <snitch/runtime.h>
 
 #include <stdint.h>
 

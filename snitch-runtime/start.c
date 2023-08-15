@@ -1,9 +1,13 @@
 // Copyright 2020 ETH Zurich and University of Bologna.
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
-#include "../../team.h"
 #include "snitch_cluster_peripheral.h"
-#include "snrt.h"
+#include "team.h"
+
+#include <snitch/runtime.h>
+
+#include <stddef.h>
+#include <stdint.h>
 
 extern const uint32_t _snrt_cluster_cluster_core_num;
 extern const uint32_t _snrt_cluster_cluster_base_hartid;
@@ -41,18 +45,16 @@ static volatile struct putc_buffer {
     char data[PUTC_BUFFER_LEN];
 } *const putc_buffer = (void *)&_edram;
 
-void _snrt_init_team(uint32_t cluster_core_id, uint32_t cluster_core_num,
-                     void *spm_start, void *spm_end,
-                     const struct snrt_cluster_bootdata *bootdata,
+void _snrt_init_team(uint32_t cluster_core_id, uint32_t cluster_core_num, void *spm_start,
+                     void *spm_end, const struct snrt_cluster_bootdata *bootdata,
                      struct snrt_team_root *team) {
     (void)cluster_core_id;
     team->base.root = team;
     team->bootdata = (void *)bootdata;
     team->global_core_base_hartid = bootdata->hartid_base;
-    team->global_core_num = bootdata->core_count * bootdata->cluster_count *
-                            bootdata->s1_quadrant_count;
-    team->cluster_idx =
-        (snrt_hartid() - bootdata->hartid_base) / bootdata->core_count;
+    team->global_core_num =
+        bootdata->core_count * bootdata->cluster_count * bootdata->s1_quadrant_count;
+    team->cluster_idx = (snrt_hartid() - bootdata->hartid_base) / bootdata->core_count;
     team->cluster_num = bootdata->cluster_count * bootdata->s1_quadrant_count;
     team->cluster_core_base_hartid = bootdata->hartid_base;
     team->cluster_core_num = cluster_core_num;
@@ -85,9 +87,8 @@ void _snrt_init_team(uint32_t cluster_core_id, uint32_t cluster_core_num,
     // init peripherals
     team->peripherals.clint = (uint32_t *)bootdata->clint_base;
     team->peripherals.perf_counters =
-        (uint32_t
-             *)(spm_start + bootdata->tcdm_size +
-                SNITCH_CLUSTER_PERIPHERAL_PERF_COUNTER_ENABLE_0_REG_OFFSET);
+        (uint32_t *)(spm_start + bootdata->tcdm_size +
+                     SNITCH_CLUSTER_PERIPHERAL_PERF_COUNTER_ENABLE_0_REG_OFFSET);
     team->peripherals.wakeup = (uint32_t *)0;  // not supported in RTL anymore
     team->peripherals.cl_clint =
         (uint32_t *)(spm_start + bootdata->tcdm_size +

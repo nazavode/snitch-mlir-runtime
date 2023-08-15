@@ -28,4 +28,3 @@
     } while (0)
 
 #endif  // defined(__SNRT_USE_TRACE)
-
