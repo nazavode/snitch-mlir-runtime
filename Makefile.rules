@@ -48,7 +48,7 @@ LDFLAGS += -lm
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.ll12: %.ll
-	$(MAKEFILE_RULES_DIRNAME)/to-llvm12.py < $< > $@
+	$(MAKEFILE_RULES_DIRNAME)/tollvm12.py < $< > $@
 
 %.o: %.ll12
 	$(CC) $(CFLAGS) -x ir -c $< -o $@

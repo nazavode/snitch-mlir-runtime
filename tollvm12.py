@@ -5,7 +5,7 @@ import sys
 import argparse
 
 PARSER = argparse.ArgumentParser(
-    prog="to-llvm12.py",
+    prog="tollvm12.py",
     description="""Transform an LLVM IR module to make it compatible with LLVM 12.
 Reads from stdin, outputs to stdout.
 
