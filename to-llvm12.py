@@ -45,10 +45,10 @@ def get_availale_metadata_id(ir):
 
 if __name__ == "__main__":
     args = PARSER.parse_args()
-    LLVM_TARGET_TRIPLE = re.compile('target triple[\s]*=[\s]*"\w+"')
-    LLVM_TARGET_DATALAYOUT = re.compile('target datalayout[\s]*=[\s]*"\w+"')
-    LLVM_NAMED_METADATA = re.compile("!([\d]+)[\s]*=[\s]*!")
-    LLVM_MODULE_FLAGS = re.compile("!llvm.module.flags[\s]*=[\s]*.+")
+    LLVM_TARGET_TRIPLE = re.compile('target\s+triple\s*=\s*".+"')
+    LLVM_TARGET_DATALAYOUT = re.compile('target\s+datalayout\s*=\s*".+"')
+    LLVM_NAMED_METADATA = re.compile("!(\d+)\s*=\s*!")
+    LLVM_MODULE_FLAGS = re.compile("!llvm\.module\.flags\s*=\s*.+")
     LLVM_ATTR_SIDEEFFECT = re.compile("memory\(.*\)")
     ir = sys.stdin.read()
     # Remove offending stuff:
