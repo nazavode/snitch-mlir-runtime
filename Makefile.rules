@@ -51,7 +51,7 @@ LDFLAGS += -lm
 	$(MAKEFILE_RULES_DIRNAME)/to-llvm12.py < $< > $@
 
 %.o: %.ll12
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -x ir -c $< -o $@
 
 %.o: %.S
 	$(CC) $(CFLAGS) -c $< -o $@

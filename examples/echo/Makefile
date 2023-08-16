@@ -9,11 +9,16 @@ OBJS =
 OBJS += echo.o
 OBJS += main.o
 
-echo.x: $(OBJS) $(SNITCH_RUNTIME_LIB)
+SNITCH_RUNTIME_LIB = ../../snitch-runtime/libsnitch-runtime.a
+
+CFLAGS += -I../../snitch-runtime/include
+CFLAGS += -Wall -Wextra -pedantic -Wno-language-extension-token -Wno-gnu-statement-expression
+
+echo.x: $(OBJS)
 	$(LD) $(LDFLAGS) $(SNITCH_RUNTIME_LIB) $^ -o $@
 
 run: echo.x
-	/src/hw/system/snitch_cluster/bin/snitch_cluster.vlt $<
+	/opt/bin/snitch_cluster.vlt $<
 
 clean:
 	rm -f *.o *.a *.ll12 echo.x

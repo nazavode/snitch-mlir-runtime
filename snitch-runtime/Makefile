@@ -18,6 +18,7 @@ OBJS += start_snitch_rtl.o
 
 CFLAGS += -I $(SNITCH_RUNTIME_DIRNAME)/include
 CFLAGS += -I $(SNITCH_RUNTIME_DIRNAME)/vendor/riscv-opcodes
+CFLAGS += -Wall -Wextra -pedantic -Wno-language-extension-token -Wno-gnu-statement-expression
 
 all: libsnitch-runtime.a
 

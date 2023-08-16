@@ -1,4 +1,3 @@
-#include "printf.h"
 #include <snitch/runtime.h>
 
 #include <stdint.h>

@@ -305,6 +305,12 @@ static inline void snrt_mutex_release(volatile uint32_t *pmtx) {
     dm_exit();                       \
     snrt_cluster_hw_barrier();
 
+/**
+ * printf implementation based on Tiny Printf
+ */
+#define printf printf_
+int printf_(const char* format, ...);
+
 #ifdef __cplusplus
 }
 #endif
