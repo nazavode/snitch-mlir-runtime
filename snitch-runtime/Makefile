@@ -14,7 +14,6 @@ OBJS += perf_cnt.o
 OBJS += printf.o
 OBJS += putchar.o
 OBJS += ssr.o
-OBJS += ssr_v2.o
 OBJS += start.o
 OBJS += team.o
 OBJS += start_snitch_rtl.o
