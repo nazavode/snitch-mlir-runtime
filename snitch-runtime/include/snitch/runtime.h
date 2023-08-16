@@ -12,6 +12,11 @@
 extern "C" {
 #endif
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-statement-expression"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wlanguage-extension-token"
+
 static inline void *snrt_memset(void *ptr, int value, size_t num) {
     for (uint32_t i = 0; i < num; ++i) *((uint8_t *)ptr + i) = (unsigned char)value;
     return ptr;
@@ -278,6 +283,9 @@ static inline void snrt_mutex_release(volatile uint32_t *pmtx) {
 
 #define printf printf_
 int printf_(const char* format, ...);
+
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop
 
 #ifdef __cplusplus
 }

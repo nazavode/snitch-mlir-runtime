@@ -5,17 +5,17 @@
 
 include ../../Makefile.rules
 
+SNITCH_RUNTIME_PREFIX ?= ../../install
+
 OBJS =
 OBJS += echo.o
 OBJS += main.o
 
-SNITCH_RUNTIME_LIB = ../../snitch-runtime/libsnitch-runtime.a
-
-CFLAGS += -I../../snitch-runtime/include
-CFLAGS += -Wall -Wextra -pedantic -Wno-language-extension-token -Wno-gnu-statement-expression
+CFLAGS += -I$(SNITCH_RUNTIME_PREFIX)/include
+CFLAGS += -Wall -Wextra -pedantic
 
 echo.x: $(OBJS)
-	$(LD) $(LDFLAGS) $(SNITCH_RUNTIME_LIB) $^ -o $@
+	$(LD) $(LDFLAGS) $(SNITCH_RUNTIME_PREFIX)/lib/libsnitch-runtime.a $^ -o $@
 
 run: echo.x
 	/opt/bin/snitch_cluster.vlt $<

@@ -1,7 +1,5 @@
 ; ModuleID = 'LLVMDialectModule'
 source_filename = "LLVMDialectModule"
-target datalayout = "e-m:e-p:32:32-i64:64-n32-S128"
-target triple = "riscv32-unknown-unknown-elf"
 
 @A = external constant [16 x [8 x float]]
 @B = external constant [16 x [8 x float]]
@@ -55,13 +53,8 @@ define i32 @main() {
 ; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
 declare void @llvm.memcpy.p0f32.p0f32.i32(float* noalias nocapture writeonly, float* noalias nocapture readonly, i32, i1 immarg) #0
 
-attributes #0 = { nocallback nofree nounwind willreturn }
+attributes #0 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
 
-!llvm.module.flags = !{!3, !4, !5, !6, !7, !8}
+!llvm.module.flags = !{!0}
 
-!3 = !{i32 7, !"Dwarf Version", i32 4}
-!4 = !{i32 2, !"Debug Info Version", i32 3}
-!5 = !{i32 1, !"wchar_size", i32 4}
-!6 = !{i32 1, !"target-abi", !"ilp32d"}
-!7 = !{i32 1, !"Code Model", i32 3}
-!8 = !{i32 1, !"SmallDataLimit", i32 8}
+!0 = !{i32 2, !"Debug Info Version", i32 3}
