@@ -13,7 +13,8 @@ COPY --from=builder /opt/bin/snitch_cluster.vlt /opt/bin/snitch_cluster.vlt
 # --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 ARG BUILD_DATE
 
-LABEL version="0.1"
-LABEL description="Provides Snitch Verilator simulator and toolchains."
-LABEL maintainer="glifi.05sneaker@icloud.com"
-LABEL org.label-schema.build-date=$BUILD_DATE
+LABEL org.opencontainers.image.title="snitch-mlir-runtime-toolchain"
+LABEL org.opencontainers.image.version="0.1"
+LABEL org.opencontainers.image.description="Provides Snitch Verilator simulator and toolchains."
+LABEL org.opencontainers.image.authors="glifi.05sneaker@icloud.com"
+LABEL org.opencontainers.image.created=$BUILD_DATE
