@@ -1,6 +1,9 @@
 SNITCH_RUNTIME_DIRNAME := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(SNITCH_RUNTIME_DIRNAME)/../Makefile.rules
 
+# Default install prefix:
+PREFIX ?= $(SNITCH_RUNTIME_DIRNAME)/install
+
 OBJS =
 OBJS += alloc.o
 OBJS += barrier.o
@@ -24,6 +27,11 @@ all: libsnitch-runtime.a
 libsnitch-runtime.a: $(OBJS)
 	$(AR) rc $@ $^
 	$(RANLIB) $@
+
+install: libsnitch-runtime.a
+	mkdir -p $(PREFIX)/lib
+	cp -f libsnitch-runtime.a $(PREFIX)/lib
+	cp -fr include $(PREFIX)/
 
 clean:
 	rm -f *.a *.o
