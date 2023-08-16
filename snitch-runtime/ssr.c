@@ -5,7 +5,7 @@
 
 /// Enable SSR.
 void snrt_ssr_enable() {
-#ifdef __TOOLCHAIN_LLVM__
+#ifdef __clang__
     __builtin_ssr_enable();
 #else
     asm volatile("csrsi 0x7C0, 1");
@@ -14,7 +14,7 @@ void snrt_ssr_enable() {
 
 /// Disable SSR.
 void snrt_ssr_disable() {
-#ifdef __TOOLCHAIN_LLVM__
+#ifdef __clang__
     __builtin_ssr_disable();
 #else
     asm volatile("csrci 0x7C0, 1");

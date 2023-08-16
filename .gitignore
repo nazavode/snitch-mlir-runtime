@@ -1,3 +1,6 @@
+# Default prefix for Makefiles
+install/
+
 # Verilator tmp files
 *.rtlbinary
 

@@ -8,8 +8,6 @@ CFLAGS =
 # Mixing .c and .ll files makes some flags, useful for the former,
 # unused for the latter (e.g. -I)
 CFLAGS += -Wno-unused-command-line-argument
-# Flags for -x c
-CFLAGS += -D__TOOLCHAIN_LLVM__
 # Common flags
 CFLAGS += -mcpu=snitch
 CFLAGS += -mcmodel=medany
