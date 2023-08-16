@@ -12,18 +12,6 @@
 extern "C" {
 #endif
 
-//================================================================================
-// Macros
-//================================================================================
-
-#ifndef snrt_min
-#define snrt_min(a, b) ((a) < (b) ? (a) : (b))
-#endif
-
-#ifndef snrt_max
-#define snrt_max(a, b) ((a) > (b) ? (a) : (b))
-#endif
-
 static inline void *snrt_memset(void *ptr, int value, size_t num) {
     for (uint32_t i = 0; i < num; ++i) *((uint8_t *)ptr + i) = (unsigned char)value;
     return ptr;
@@ -306,7 +294,7 @@ static inline void snrt_mutex_release(volatile uint32_t *pmtx) {
     snrt_cluster_hw_barrier();
 
 /**
- * printf implementation based on Tiny Printf
+ * @brief printf implementation based on Tiny Printf
  */
 #define printf printf_
 int printf_(const char* format, ...);

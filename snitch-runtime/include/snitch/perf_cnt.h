@@ -7,6 +7,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /// Different perf counters
 // Must match with `snitch_cluster_peripheral`
 enum snrt_perf_cnt {
@@ -79,3 +83,7 @@ void snrt_start_perf_counter(enum snrt_perf_cnt perf_cnt,
 void snrt_stop_perf_counter(enum snrt_perf_cnt perf_cnt);
 void snrt_reset_perf_counter(enum snrt_perf_cnt);
 uint32_t snrt_get_perf_counter(enum snrt_perf_cnt perf_cnt);
+
+#ifdef __cplusplus
+}
+#endif
