@@ -8,6 +8,9 @@
 
 # Author: Paul Scheffler <paulsc@iis.ee.ethz.ch>
 
+# This is part of the PULP project, vendored from the upstream Snitch code base at:
+# https://github.com/pulp-platform/snitch
+
 # TODO: OPER_TYPES and FPU_OPER_TYPES could break: optimization might alter enum mapping
 # TODO: We annotate all FP16 LSU values as IEEE, not FP16ALT... can we do better?
 
