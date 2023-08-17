@@ -17,24 +17,3 @@ This has been built via:
   [`vector.print`](https://mlir.llvm.org/docs/Dialects/Vector/#vectorprint-mlirvectorprintop)
   work;
 * allocators to allow using STL containers on Snitch (currently leveraging bump allocators provided by the runtime).
-
-## Usage
-
-The runtime library can be compiled as follows:
-
-    mkdir build
-    cd build
-    cmake ..
-    make
-
-The tests can be executed as follows:
-
-    make test
-
-Interesting CMake options that can be set via `-D<option>=<value>`:
-
-- `SNITCH_BANSHEE`: The banshee simulator binary to use for test execution.
-- `CMAKE_TOOLCHAIN_FILE`: The compiler toolchain configuration to use. Acceptable values:
-    - `toolchain-gcc` for a GNU tolchain
-    - `toolchain-llvm` for a LLVM/Clang toolchain (coming soon)
-    - Your own custom `<toolchain>.cmake` file; see `../cmake/toolchain-gcc.cmake` for reference
